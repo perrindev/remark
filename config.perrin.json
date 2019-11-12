@@ -14,8 +14,8 @@
     "disable_3pid_login": false,
     "brand": "Remark",
     "branding": {
-        "welcomeBackgroundUrl": "http://chat.perrinwear.com/static_assets/background.jpg",
-        "authHeaderLogoUrl": "http://chat.perrinwear.com/static_assets/logo.svg",
+        "welcomeBackgroundUrl": "themes/riot/img/backgrounds/press.jpg",
+        "authHeaderLogoUrl": "themes/riot/img/logos/riot-im-logo.svg",
         "authFooterLinks": [
             {
                 "text": "Perrin Website",
