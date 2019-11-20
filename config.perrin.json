@@ -1,11 +1,11 @@
 {
     "default_server_config": {
         "m.homeserver": {
-            "base_url": "http://chat.perrinwear.com",
+            "base_url": "https://chat.perrinwear.com",
             "server_name": "Remark"
         },
         "m.identity_server": {
-            "base_url": "http://chat.perrinwear.com"
+            "base_url": "https://chat.perrinwear.com"
         }
     },
     "disable_custom_urls": false,
@@ -49,7 +49,7 @@
     "default_theme": "dark",
     "roomDirectory": {
         "servers": [
-            "http://chat.perrinwear.com"
+            "https://chat.perrinwear.com"
         ]
     },
     "welcomeUserId": false,
