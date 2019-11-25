@@ -2,7 +2,7 @@
   "name": "riot-web",
   "productName": "Riot",
   "main": "electron_app/src/electron-main.js",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "A feature-rich client for Matrix.org",
   "author": "New Vector Ltd.",
   "repository": {
@@ -66,7 +66,6 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
-    "bluebird": "^3.5.2",
     "browser-request": "^0.3.3",
     "draft-js": "^0.11.0-alpha",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
@@ -74,8 +73,8 @@
     "gemini-scrollbar": "github:matrix-org/gemini-scrollbar#91e1e566",
     "gfm.css": "^1.1.2",
     "highlight.js": "^9.13.1",
-    "matrix-js-sdk": "2.4.3",
-    "matrix-react-sdk": "1.7.2",
+    "matrix-js-sdk": "2.4.4",
+    "matrix-react-sdk": "1.7.3",
     "modernizr": "^3.6.0",
     "olm": "https://packages.matrix.org/npm/olm/olm-3.1.4.tgz",
     "prop-types": "^15.7.2",
@@ -93,7 +92,6 @@
     "babel-loader": "^7.1.5",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-plugin-transform-async-to-bluebird": "^1.1.1",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -115,6 +113,7 @@
     "eslint": "^5.8.0",
     "eslint-config-google": "^0.7.1",
     "eslint-plugin-babel": "^4.1.2",
+    "eslint-plugin-jest": "^23.0.4",
     "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-react-hooks": "^2.2.0",
@@ -155,7 +154,7 @@
   },
   "build": {
     "appId": "im.riot.app",
-    "electronVersion": "6.1.4",
+    "electronVersion": "7.1.2",
     "files": [
       "node_modules/**",
       "src/**"
