@@ -6009,10 +6009,9 @@ math-random@^1.0.1:
   resolved "https://registry.yarnpkg.com/math-random/-/math-random-1.0.4.tgz#5dd6943c938548267016d4e34f057583080c514c"
   integrity sha512-rUxjysqif/BZQH2yhd5Aaq7vXMSx9NdEsQcyA07uEzIvxgI7zIr33gGsh+RU0/XjmQpCW7RsVof1vlkvQVCK5A==
 
-matrix-js-sdk@2.4.4:
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/matrix-js-sdk/-/matrix-js-sdk-2.4.4.tgz#d5e2d6fbe938c4275a1423a5f09330d33517ce3f"
-  integrity sha512-wSaRFvhWvwEzVaEkyBGo5ReumvaM5OrC1MJ6SVlyoLwH/WRPEXcUlu+rUNw5TFVEAH4TAVHXf/SVRBiR0j5nSQ==
+"matrix-js-sdk@github:matrix-org/matrix-js-sdk#develop":
+  version "2.4.5"
+  resolved "https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/6ea8003df23d55e2b84911c3204005c42a9ffa9c"
   dependencies:
     another-json "^0.2.0"
     babel-runtime "^6.26.0"
@@ -6033,14 +6032,12 @@ matrix-mock-request@^1.2.3:
     bluebird "^3.5.0"
     expect "^1.20.2"
 
-matrix-react-sdk@1.7.3:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/matrix-react-sdk/-/matrix-react-sdk-1.7.3.tgz#f3f64dc77eea64b77ba3d574847bc03146d421a3"
-  integrity sha512-XSZSj4GWhxhoEoCIHGyMwBKdmcHJrKB9hToHJQTI0OL/x8+ErTLVAgJYW8hvR16l5lXGzSsYWDOfQOTbKK1tLQ==
+"matrix-react-sdk@github:matrix-org/matrix-react-sdk#develop":
+  version "1.7.4"
+  resolved "https://codeload.github.com/matrix-org/matrix-react-sdk/tar.gz/54d6b6aa73656d9c00cc047ace964bc73ce011e7"
   dependencies:
     babel-plugin-syntax-dynamic-import "^6.18.0"
     babel-runtime "^6.26.0"
-    bluebird "^3.5.0"
     blueimp-canvas-to-blob "^3.5.0"
     browser-encrypt-attachment "^0.3.0"
     browser-request "^0.3.3"
@@ -6069,7 +6066,7 @@ matrix-react-sdk@1.7.3:
     linkifyjs "^2.1.6"
     lodash "^4.17.14"
     lolex "4.2"
-    matrix-js-sdk "2.4.4"
+    matrix-js-sdk "github:matrix-org/matrix-js-sdk#develop"
     optimist "^0.6.1"
     pako "^1.0.5"
     png-chunks-extract "^1.0.0"
@@ -7163,6 +7160,14 @@ posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
+
+postcss-easings@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-easings/-/postcss-easings-2.0.0.tgz#79bde7ce71c838ef7371a59d293e08b337b1802b"
+  integrity sha512-oJUmnrPwayx47y+jrRKSofHOjRjdJCOyqNXZURQkAVEra93ShqUcN8WYIuT/pWQeGe2I/pxxFfw7mOUGBrxCRQ==
+  dependencies:
+    postcss "^7.0.2"
+    postcss-value-parser "^3.3.0"
 
 postcss-extend@^1.0.5:
   version "1.0.5"
