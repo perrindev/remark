@@ -1,3 +1,143 @@
+Changes in [1.5.9](https://github.com/vector-im/riot-web/releases/tag/v1.5.9) (2020-02-17)
+==========================================================================================
+[Full Changelog](https://github.com/vector-im/riot-web/compare/v1.5.9-rc.1...v1.5.9)
+
+ * Automate SDK dep upgrades for release
+   [\#12374](https://github.com/vector-im/riot-web/pull/12374)
+
+Changes in [1.5.9-rc.1](https://github.com/vector-im/riot-web/releases/tag/v1.5.9-rc.1) (2020-02-13)
+====================================================================================================
+[Full Changelog](https://github.com/vector-im/riot-web/compare/v1.5.8...v1.5.9-rc.1)
+
+ * Upgrade JS SDK to 5.0.0-rc.1 and React SDK 2.1.0-rc.2
+ * Update from Weblate
+   [\#12354](https://github.com/vector-im/riot-web/pull/12354)
+ * Add top left menu shortcut
+   [\#12310](https://github.com/vector-im/riot-web/pull/12310)
+ * Remove modernizr rules for features on which we only soft depend
+   [\#12272](https://github.com/vector-im/riot-web/pull/12272)
+ * Embed CSP meta tag and stop using script-src unsafe-inline
+   [\#12258](https://github.com/vector-im/riot-web/pull/12258)
+ * Add contribute.json
+   [\#12251](https://github.com/vector-im/riot-web/pull/12251)
+ * Improve Browser checks
+   [\#12232](https://github.com/vector-im/riot-web/pull/12232)
+ * Document padlock flag
+   [\#12173](https://github.com/vector-im/riot-web/pull/12173)
+ * Enable cross-signing on /develop
+   [\#12126](https://github.com/vector-im/riot-web/pull/12126)
+ * Switch back to legacy decorators
+   [\#12110](https://github.com/vector-im/riot-web/pull/12110)
+ * Update babel targets
+   [\#12102](https://github.com/vector-im/riot-web/pull/12102)
+ * Install deps for linting
+   [\#12076](https://github.com/vector-im/riot-web/pull/12076)
+ * Update from Weblate
+   [\#12062](https://github.com/vector-im/riot-web/pull/12062)
+ * Change to minimal Webpack output
+   [\#12049](https://github.com/vector-im/riot-web/pull/12049)
+ * Remove docs for new invite dialog labs feature
+   [\#12015](https://github.com/vector-im/riot-web/pull/12015)
+ * ElectronPlatform: Add the indexSize method.
+   [\#11529](https://github.com/vector-im/riot-web/pull/11529)
+ * ElectronPlatform: Add the ability to load file events from the event index
+   [\#11907](https://github.com/vector-im/riot-web/pull/11907)
+ * Fix the remainder of the cookie links
+   [\#12008](https://github.com/vector-im/riot-web/pull/12008)
+ * Use bash in Docker scripts
+   [\#12001](https://github.com/vector-im/riot-web/pull/12001)
+ * Use debian to build the Docker image
+   [\#11999](https://github.com/vector-im/riot-web/pull/11999)
+ * Update cookie policy urls on /app and /develop config.json
+   [\#11998](https://github.com/vector-im/riot-web/pull/11998)
+ * BuildKite: Only deploy to /develop if everything else passed
+   [\#11996](https://github.com/vector-im/riot-web/pull/11996)
+ * Add docs for admin report content message
+   [\#11995](https://github.com/vector-im/riot-web/pull/11995)
+ * Load as little as possible in index.js for the skinner
+   [\#11959](https://github.com/vector-im/riot-web/pull/11959)
+ * Fix webpack config (by stealing Dave's config)
+   [\#11956](https://github.com/vector-im/riot-web/pull/11956)
+ * Force Jest to resolve the js-sdk and react-sdk to src directories
+   [\#11954](https://github.com/vector-im/riot-web/pull/11954)
+ * Fix build to not babel modules inside js/react sdk
+   [\#11949](https://github.com/vector-im/riot-web/pull/11949)
+ * Fix webpack to babel js-sdk & react-sdk but no other deps
+   [\#11944](https://github.com/vector-im/riot-web/pull/11944)
+
+Changes in [1.5.8](https://github.com/vector-im/riot-web/releases/tag/v1.5.8) (2020-01-27)
+==========================================================================================
+[Full Changelog](https://github.com/vector-im/riot-web/compare/v1.5.8-rc.2...v1.5.8)
+
+ * Fixes for alias display and copy / paste on composer
+
+Changes in [1.5.8-rc.2](https://github.com/vector-im/riot-web/releases/tag/v1.5.8-rc.2) (2020-01-22)
+====================================================================================================
+[Full Changelog](https://github.com/vector-im/riot-web/compare/v1.5.8-rc.1...v1.5.8-rc.2)
+
+ * Fix incorrect version of react-sdk
+
+Changes in [1.5.8-rc.1](https://github.com/vector-im/riot-web/releases/tag/v1.5.8-rc.1) (2020-01-22)
+====================================================================================================
+[Full Changelog](https://github.com/vector-im/riot-web/compare/v1.5.7...v1.5.8-rc.1)
+
+This version contains an upgrade to the cryptography database
+version. Once users run this version, their session's indexeddb
+store will be upgraded and older version of Riot will no longer
+be able to read it. Users will have to log out and log in if
+the version of Riot is downgraded back to a previous version.
+
+ * Fix webpack config (by stealing Dave's config)
+   [\#11994](https://github.com/vector-im/riot-web/pull/11994)
+ * Fix webpack to babel js-sdk & react-sdk but no other deps
+   [\#11947](https://github.com/vector-im/riot-web/pull/11947)
+ * Update from Weblate
+   [\#11934](https://github.com/vector-im/riot-web/pull/11934)
+ * Fix rageshake post-sourcemaps
+   [\#11926](https://github.com/vector-im/riot-web/pull/11926)
+ * Fix yarn start concurrent commands
+   [\#11895](https://github.com/vector-im/riot-web/pull/11895)
+ * Run the react-sdk reskindexer for developers
+   [\#11894](https://github.com/vector-im/riot-web/pull/11894)
+ * Update labs documentation for feature_ftue_dms given new scope
+   [\#11893](https://github.com/vector-im/riot-web/pull/11893)
+ * Fix indentation on webpack config and make sourcemapped files legible
+   [\#11892](https://github.com/vector-im/riot-web/pull/11892)
+ * Remove spinner check
+   [\#11891](https://github.com/vector-im/riot-web/pull/11891)
+ * Don't minifiy builds of develop through CI packaging
+   [\#11867](https://github.com/vector-im/riot-web/pull/11867)
+ * Use Jest for tests
+   [\#11869](https://github.com/vector-im/riot-web/pull/11869)
+ * Support application/wasm in Docker image
+   [\#11858](https://github.com/vector-im/riot-web/pull/11858)
+ * Fix sourcemaps by refactoring the build system
+   [\#11843](https://github.com/vector-im/riot-web/pull/11843)
+ * Disable event indexing on develop
+   [\#11850](https://github.com/vector-im/riot-web/pull/11850)
+ * Updated blog url
+   [\#11792](https://github.com/vector-im/riot-web/pull/11792)
+ * Enable and document presence in room list feature flag
+   [\#11829](https://github.com/vector-im/riot-web/pull/11829)
+ * Add stub service worker so users can install on desktop with Chrome
+   [\#11774](https://github.com/vector-im/riot-web/pull/11774)
+ * Update from Weblate
+   [\#11826](https://github.com/vector-im/riot-web/pull/11826)
+ * Sourcemaps: develop -> feature branch
+   [\#11802](https://github.com/vector-im/riot-web/pull/11802)
+ * Update build scripts for new process
+   [\#11801](https://github.com/vector-im/riot-web/pull/11801)
+ * Make the webpack config work for us
+   [\#11712](https://github.com/vector-im/riot-web/pull/11712)
+ * Updates URL for Electron Command Line Switches
+   [\#11810](https://github.com/vector-im/riot-web/pull/11810)
+ * Import from src/ for the react-sdk and js-sdk
+   [\#11714](https://github.com/vector-im/riot-web/pull/11714)
+ * Convert components to ES6 exports
+   [\#11713](https://github.com/vector-im/riot-web/pull/11713)
+ * Remove now-retired package.json property
+   [\#11660](https://github.com/vector-im/riot-web/pull/11660)
+
 Changes in [1.5.7](https://github.com/vector-im/riot-web/releases/tag/v1.5.7) (2020-01-13)
 ==========================================================================================
 [Full Changelog](https://github.com/vector-im/riot-web/compare/v1.5.7-rc.2...v1.5.7)

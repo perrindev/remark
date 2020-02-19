@@ -34,6 +34,7 @@ module.exports = (env, argv) => {
             "bundle": "./src/vector/index.js",
             "indexeddb-worker": "./src/vector/indexeddb-worker.js",
             "mobileguide": "./src/vector/mobile_guide/index.js",
+            "usercontent": "./node_modules/matrix-react-sdk/src/usercontent/index.js",
 
             // CSS themes
             "theme-light": "./node_modules/matrix-react-sdk/res/themes/light/css/light.scss",
@@ -302,7 +303,7 @@ module.exports = (env, argv) => {
                 // HtmlWebpackPlugin will screw up our formatting like the names
                 // of the themes and which chunks we actually care about.
                 inject: false,
-                excludeChunks: ['mobileguide'],
+                excludeChunks: ['mobileguide', 'usercontent'],
                 minify: argv.mode === 'production',
                 vars: {
                     og_image_url: og_image_url,
@@ -315,6 +316,14 @@ module.exports = (env, argv) => {
                 filename: 'mobile_guide/index.html',
                 minify: argv.mode === 'production',
                 chunks: ['mobileguide'],
+            }),
+
+            // This is the usercontent sandbox's entry point (separate for iframing)
+            new HtmlWebpackPlugin({
+                template: './node_modules/matrix-react-sdk/src/usercontent/index.html',
+                filename: 'usercontent/index.html',
+                minify: argv.mode === 'production',
+                chunks: ['usercontent'],
             }),
         ],
 
@@ -337,10 +346,9 @@ module.exports = (env, argv) => {
             // serve unwebpacked assets from webapp.
             contentBase: './webapp',
 
-            stats: {
-                // don't fill the console up with a mahoosive list of modules
-                chunks: false,
-            },
+            // Only output errors, warnings, or new compilations.
+            // This hides the massive list of modules.
+            stats: 'minimal',
 
             // hot module replacement doesn't work (I think we'd need react-hot-reload?)
             // so webpack-dev-server reloads the page on every update which is quite
