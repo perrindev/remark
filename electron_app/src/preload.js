@@ -15,6 +15,45 @@ limitations under the License.
 */
 
 const { ipcRenderer } = require('electron');
+const { SpellCheckHandler, ContextMenuBuilder } = require('electron-spellchecker');
 
 // expose ipcRenderer to the renderer process
 window.ipcRenderer = ipcRenderer;
+
+class RemarkContextMenuBuilder extends ContextMenuBuilder {
+    addInspectElement (menu) {
+        return menu;
+    }
+};
+
+try {
+    window.spellCheckHandler = new SpellCheckHandler();
+
+    // this seems to be required
+    window.spellCheckHandler.provideHintText(
+        'This is probably the language that you want to check in'
+    );
+    window.spellCheckHandler.autoUnloadDictionariesOnBlur();
+
+    window.contextMenuBuilder = new RemarkContextMenuBuilder(
+        window.spellCheckHandler,
+        null,
+        true
+    );
+} catch (e) {
+    console.error(e);
+}
+
+// good
+ipcRenderer.on('dom-loaded', (ev, params) => {
+    if (window.spellCheckHandler) {
+        window.spellCheckHandler.attachToInput();
+    }
+});
+
+// good
+ipcRenderer.on('context-menu-open', (ev, params) => {
+    if (window.contextMenuBuilder) {
+        window.contextMenuBuilder.showPopupMenu(params);
+    }
+});

@@ -547,8 +547,12 @@ app.on('ready', () => {
         webPreferences: {
             preload: preloadScript,
             nodeIntegration: false,
-            sandbox: true,
-            enableRemoteModule: false,
+
+            // NOTE: the following 2 properties were modified for spellcheck
+            // may need to re-evaluate the behavior here
+            sandbox: false,
+            enableRemoteModule: true,
+
             // We don't use this: it's useful for the preload script to
             // share a context with the main page so we can give select
             // objects to the main page. The sandbox option isolates the
