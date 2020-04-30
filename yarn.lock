@@ -7624,6 +7624,7 @@ matrix-react-sdk@2.5.0-rc.5:
   version "2.5.0-rc.5"
   resolved "https://registry.yarnpkg.com/matrix-react-sdk/-/matrix-react-sdk-2.5.0-rc.5.tgz#3b6c8dd05069a201a7fdd4265a8f20b3f1afeaca"
   integrity sha512-CO8S6C3wfvCsgS7h48KPx/9yGFLS5O4HZjRfUsbhAD+/16rUy7f9t+8w1Z320xH+X/LMQsb47Y6C6TDZ4KIdlQ==
+
   dependencies:
     "@babel/runtime" "^7.8.3"
     blueimp-canvas-to-blob "^3.5.0"

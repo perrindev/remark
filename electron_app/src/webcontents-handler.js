@@ -1,4 +1,4 @@
-const {clipboard, nativeImage, Menu, MenuItem, shell, dialog} = require('electron');
+const { clipboard, nativeImage, Menu, MenuItem, shell, dialog } = require('electron');
 const url = require('url');
 const fs = require('fs');
 const request = require('request');
@@ -173,15 +173,23 @@ function onEditableContextMenu(ev, params) {
 
 
 module.exports = (webContents) => {
+
+    // initialize spellcheck when dom is ready
+    webContents.once('dom-ready', () => {
+        webContents.send('dom-loaded');
+    });
+
     webContents.on('new-window', onWindowOrNavigate);
     webContents.on('will-navigate', (ev, target) => {
         if (target.startsWith("vector://")) return;
         return onWindowOrNavigate(ev, target);
     });
 
-    webContents.on('context-menu', function(ev, params) {
+    webContents.on('context-menu', (ev, params) => {
         if (params.linkURL || params.srcURL) {
             onLinkContextMenu(ev, params);
+        } else if (params.misspelledWord && params.misspelledWord !== '') {
+            webContents.send('context-menu-open', params);
         } else if (params.selectionText) {
             onSelectedContextMenu(ev, params);
         } else if (params.isEditable) {
