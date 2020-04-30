@@ -2,7 +2,7 @@
   "name": "riot-web",
   "productName": "Riot",
   "main": "electron_app/src/electron-main.js",
-  "version": "1.5.9",
+  "version": "1.6.0-rc.5",
   "description": "A feature-rich client for Matrix.org",
   "author": "New Vector Ltd.",
   "repository": {
@@ -37,37 +37,39 @@
     "reskindex:watch-react": "node scripts/yarn-sub.js matrix-react-sdk reskindex:watch",
     "clean": "rimraf lib webapp electron_app/dist",
     "build": "yarn clean && yarn build:genfiles && yarn build:compile && yarn build:types && yarn build:bundle",
+    "build-stats": "yarn clean && yarn build:genfiles && yarn build:compile && yarn build:types && yarn build:bundle-stats",
+    "build:jitsi": "scripts/build-jitsi.sh",
     "build:res": "node scripts/copy-res.js",
-    "build:genfiles": "yarn reskindex && yarn build:res",
+    "build:genfiles": "yarn reskindex && yarn build:res && yarn build:jitsi",
     "build:modernizr": "modernizr -c .modernizr.json -d src/vector/modernizr.js",
-    "build:compile": "babel -d lib --verbose --extensions \".ts,.js\" src",
+    "build:compile": "babel -d lib --verbose --extensions \".ts,.js,.tsx\" src",
     "build:bundle": "cross-env NODE_ENV=production webpack -p --progress --bail --mode production",
+    "build:bundle-stats": "cross-env NODE_ENV=production webpack -p --progress --bail --mode production --json > webpack-stats.json",
     "build:electron": "yarn build && yarn install:electron && electron-builder -wml --ia32 --x64",
     "build:electron:linux": "yarn build && electron-builder -l --x64",
     "build:electron:macos": "yarn build && electron-builder -m --x64",
     "build:electron:windows": "yarn build && electron-builder -w --ia32 --x64",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly --jsx react",
     "install:electron": "electron-builder install-app-deps",
     "dist": "scripts/package.sh",
     "start": "concurrently --kill-others-on-fail --prefix \"{time} [{name}]\" -n reskindex,reskindex-react,res,riot-js \"yarn reskindex:watch\" \"yarn reskindex:watch-react\" \"yarn start:res\" \"yarn start:js\"",
-    "start:res": "node scripts/copy-res.js -w",
+    "start:res": "yarn build:jitsi && node scripts/copy-res.js -w",
     "start:js": "webpack-dev-server --host=0.0.0.0 --output-filename=bundles/_dev_/[name].js --output-chunk-filename=bundles/_dev_/[name].js -w --progress --mode development",
     "electron": "yarn build && yarn install:electron && electron .",
     "lint": "yarn lint:types && yarn lint:ts && yarn lint:js && yarn lint:style",
     "lint:js": "eslint src",
     "lint:ts": "echo 'We don't actually have a typescript linter at this layer because tslint is being removed from our stack. Presumably your TS is fine.'",
-    "lint:types": "tsc --noEmit",
+    "lint:types": "tsc --noEmit --jsx react",
     "lint:style": "stylelint 'res/css/**/*.scss'",
     "test": "jest"
   },
   "dependencies": {
     "browser-request": "^0.3.3",
     "favico.js": "^0.3.10",
-    "gemini-scrollbar": "github:matrix-org/gemini-scrollbar#91e1e566",
     "gfm.css": "^1.1.2",
     "highlight.js": "^9.13.1",
-    "matrix-js-sdk": "github:matrix-org/matrix-js-sdk#develop",
-    "matrix-react-sdk": "github:matrix-org/matrix-react-sdk#develop",
+    "matrix-js-sdk": "6.0.0-rc.1",
+    "matrix-react-sdk": "2.5.0-rc.5",
     "olm": "https://packages.matrix.org/npm/olm/olm-3.1.4.tgz",
     "postcss-easings": "^2.0.0",
     "prop-types": "^15.7.2",
@@ -94,7 +96,8 @@
     "@babel/preset-typescript": "^7.7.4",
     "@babel/register": "^7.7.4",
     "@babel/runtime": "^7.7.6",
-    "@types/react": "^16.9.17",
+    "@types/modernizr": "^3.5.3",
+    "@types/react": "16.9",
     "@types/react-dom": "^16.9.4",
     "autoprefixer": "^9.7.3",
     "babel-eslint": "^10.0.3",
@@ -134,6 +137,7 @@
     "modernizr": "^3.6.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-extend": "^1.0.5",
+    "postcss-hexrgba": "^2.0.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-mixins": "^6.2.3",
@@ -153,7 +157,7 @@
   },
   "build": {
     "appId": "im.riot.app",
-    "electronVersion": "7.1.12",
+    "electronVersion": "7.1.14",
     "files": [
       "node_modules/**",
       "src/**"
@@ -188,7 +192,15 @@
       "output": "electron_app/dist",
       "app": "electron_app"
     },
-    "afterSign": "scripts/electron_afterSign.js"
+    "afterSign": "scripts/electron_afterSign.js",
+    "protocols": [
+      {
+        "name": "riot",
+        "schemes": [
+          "riot"
+        ]
+      }
+    ]
   },
   "jest": {
     "modulePathIgnorePatterns": [

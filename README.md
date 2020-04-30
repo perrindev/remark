@@ -11,8 +11,10 @@ Riot has several tiers of support for different environments:
 
 * Supported
   * Definition: Issues **actively triaged**, regressions **block** the release
-  * Last 2 major versions of Chrome, Firefox, and Safari
-  * Latest release of official Riot Desktop app on macOS, Windows, and Linux versions that are actively supported by the OS vendor and receive security updates
+  * Last 2 major versions of Chrome, Firefox, and Safari on desktop OSes
+  * Latest release of official Riot Desktop app on desktop OSes
+  * Desktop OSes means macOS, Windows, and Linux versions for desktop devices
+    that are actively supported by the OS vendor and receive security updates
 * Experimental
   * Definition: Issues **accepted**, regressions **do not block** the release
   * Riot as an installed PWA via current stable version of Chrome, Firefox, and Safari
@@ -76,7 +78,7 @@ Riot is a modular webapp built with modern ES6 and uses a Node.js build system.
 Ensure you have the latest LTS version of Node.js installed.
 
 Using `yarn` instead of `npm` is recommended. Please see the Yarn [install
-guide](https://yarnpkg.com/docs/install/) if you do not have it already.
+guide](https://classic.yarnpkg.com/en/docs/install) if you do not have it already.
 
 1. Install or update `node.js` so that your `node` is at least v10.x.
 1. Install `yarn` if not present already.
@@ -221,6 +223,11 @@ Before attempting to develop on Riot you **must** read the [developer guide
 for `matrix-react-sdk`](https://github.com/matrix-org/matrix-react-sdk), which
 also defines the design, architecture and style for Riot too.
 
+Before starting work on a feature, it's best to ensure your plan aligns well
+with our vision for Riot. Please chat with the team in
+[#riot-dev:matrix.org](https://matrix.to/#/#riot-dev:matrix.org) before you
+start so we can ensure it's something we'd be willing to merge.
+
 You should also familiarise yourself with the ["Here be Dragons" guide
 ](https://docs.google.com/document/d/12jYzvkidrp1h7liEuLIe6BMdU0NUjndUYI971O06ooM)
 to the tame & not-so-tame dragons (gotchas) which exist in the codebase.
@@ -281,6 +288,7 @@ yarn install
 yarn start
 ```
 
+
 Wait a few seconds for the initial build to finish; you should see something like:
 ```
 Hash: b0af76309dd56d7275c8
@@ -302,6 +310,23 @@ modifying it. See the [configuration docs](docs/config.md) for details.
 
 Open http://127.0.0.1:8080/ in your browser to see your newly built Riot.
 
+**Note**: The build script uses inotify by default on Linux to monitor directories 
+for changes. If the inotify watch limit is too low your build will silently fail.
+To avoid this issue, we recommend a limit of at least 128M.
+
+To set a new inotify watch limit, execute:
+
+```
+$ sudo sysctl fs.inotify.max_user_watches=131072
+$ sudo sysctl -p
+```
+
+If you wish, you can make this new limit permanent, by executing:
+
+```
+$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+$ sudo sysctl -p
+```
 ___
 
 When you make changes to `matrix-react-sdk` or `matrix-js-sdk` they should be

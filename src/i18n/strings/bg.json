@@ -11,7 +11,7 @@
     "Chat with Riot Bot": "Чати с Riot Bot",
     "You can use the custom server options to sign into other Matrix servers by specifying a different homeserver URL. This allows you to use Riot with an existing Matrix account on a different homeserver.": "Може да използвате настройките за собствен сървър за да влезете в друг Matrix сървър, чрез указване на адреса му. Това ви позволява да използвате Riot със съществуващ Matrix акаунт, принадлежащ към друг сървър.",
     "Sign In": "Вписване",
-    "Create Account": "Създай акаунт",
+    "Create Account": "Създай профил",
     "Need help?": "Нужда от помощ?",
     "Explore rooms": "Открий стаи",
     "Room Directory": "Директория със стаи",
@@ -21,5 +21,7 @@
     "Your Riot is misconfigured": "Riot не е конфигуриран правилно",
     "Your Riot configuration contains invalid JSON. Please correct the problem and reload the page.": "Riot конфигурацията ви съдържа невалиден JSON. Коригирайте проблема и презаредете страницата.",
     "The message from the parser is: %(message)s": "Грешката от парсъра е: %(message)s",
-    "Invalid JSON": "Невалиден JSON"
+    "Invalid JSON": "Невалиден JSON",
+    "Open user settings": "Отвори потребителските настройки",
+    "Go to your browser to complete Sign In": "Отидете в браузъра за да завършите влизането"
 }

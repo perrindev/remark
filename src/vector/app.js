@@ -18,19 +18,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import olmWasmPath from 'olm/olm.wasm';
-
 import React from 'react';
 // add React and ReactPerf to the global namespace, to make them easier to
 // access via the console
 global.React = React;
 
-import ReactDOM from 'react-dom';
 import * as sdk from 'matrix-react-sdk';
 import PlatformPeg from 'matrix-react-sdk/src/PlatformPeg';
 import * as VectorConferenceHandler from 'matrix-react-sdk/src/VectorConferenceHandler';
-import * as languageHandler from 'matrix-react-sdk/src/languageHandler';
-import {_t, _td, newTranslatableError} from 'matrix-react-sdk/src/languageHandler';
+import {_td, newTranslatableError} from 'matrix-react-sdk/src/languageHandler';
 import AutoDiscoveryUtils from 'matrix-react-sdk/src/utils/AutoDiscoveryUtils';
 import {AutoDiscovery} from "matrix-js-sdk/src/autodiscovery";
 import * as Lifecycle from "matrix-react-sdk/src/Lifecycle";
@@ -39,54 +35,12 @@ import url from 'url';
 
 import {parseQs, parseQsFromFragment} from './url_utils';
 
-import ElectronPlatform from './platform/ElectronPlatform';
-import WebPlatform from './platform/WebPlatform';
-
 import {MatrixClientPeg} from 'matrix-react-sdk/src/MatrixClientPeg';
-import SettingsStore from "matrix-react-sdk/src/settings/SettingsStore";
 import SdkConfig from "matrix-react-sdk/src/SdkConfig";
-import {setTheme} from "matrix-react-sdk/src/theme";
-
-import Olm from 'olm';
 
 import CallHandler from 'matrix-react-sdk/src/CallHandler';
 
 let lastLocationHashSet = null;
-
-function checkBrowserFeatures() {
-    if (!window.Modernizr) {
-        console.error("Cannot check features - Modernizr global is missing.");
-        return false;
-    }
-
-    // custom checks atop Modernizr because it doesn't have ES2018/ES2019 checks in it for some features we depend on,
-    // Modernizr requires rules to be lowercase with no punctuation:
-    // ES2018: http://www.ecma-international.org/ecma-262/9.0/#sec-promise.prototype.finally
-    window.Modernizr.addTest("promiseprototypefinally", () =>
-        window.Promise && window.Promise.prototype && typeof window.Promise.prototype.finally === "function");
-    // ES2019: http://www.ecma-international.org/ecma-262/10.0/#sec-object.fromentries
-    window.Modernizr.addTest("objectfromentries", () =>
-        window.Object && typeof window.Object.fromEntries === "function");
-
-    const featureList = Object.keys(window.Modernizr);
-
-    let featureComplete = true;
-    for (let i = 0; i < featureList.length; i++) {
-        if (window.Modernizr[featureList[i]] === undefined) {
-            console.error(
-                "Looked for feature '%s' but Modernizr has no results for this. " +
-                "Has it been configured correctly?", featureList[i],
-            );
-            return false;
-        }
-        if (window.Modernizr[featureList[i]] === false) {
-            console.error("Browser missing feature: '%s'", featureList[i]);
-            // toggle flag rather than return early so we log all missing features rather than just the first.
-            featureComplete = false;
-        }
-    }
-    return featureComplete;
-}
 
 // Parse the given window.location and return parameters that can be used when calling
 // MatrixChat.showScreen(screen, params)
@@ -172,7 +126,7 @@ function onTokenLoginCompleted() {
     window.location.href = formatted;
 }
 
-export async function loadApp() {
+export async function loadApp(fragParams: {}) {
     // XXX: the way we pass the path to the worker script from webpack via html in body's dataset is a hack
     // but alternatives seem to require changing the interface to passing Workers to js-sdk
     const vectorIndexeddbWorkerScript = document.body.dataset.vectorIndexeddbWorkerScript;
@@ -181,213 +135,37 @@ export async function loadApp() {
         // the bundling. The js-sdk will just fall back to accessing
         // indexeddb directly with no worker script, but we want to
         // make sure the indexeddb script is present, so fail hard.
-        throw new Error("Missing indexeddb worker script!");
+        throw newTranslatableError(_td("Missing indexeddb worker script!"));
     }
     MatrixClientPeg.setIndexedDbWorkerScript(vectorIndexeddbWorkerScript);
     CallHandler.setConferenceHandler(VectorConferenceHandler);
 
     window.addEventListener('hashchange', onHashChange);
 
-    await loadOlm();
-
-    // set the platform for react sdk
-    if (window.ipcRenderer) {
-        console.log("Using Electron platform");
-        const plaf = new ElectronPlatform();
-        PlatformPeg.set(plaf);
-    } else {
-        console.log("Using Web platform");
-        PlatformPeg.set(new WebPlatform());
-    }
-
     const platform = PlatformPeg.get();
 
-    let configJson;
-    let configError;
-    let configSyntaxError = false;
-    try {
-        configJson = await platform.getConfig();
-    } catch (e) {
-        configError = e;
-
-        if (e && e.err && e.err instanceof SyntaxError) {
-            console.error("SyntaxError loading config:", e);
-            configSyntaxError = true;
-            configJson = {}; // to prevent errors between here and loading CSS for the error box
-        }
-    }
-
-    // XXX: We call this twice, once here and once in MatrixChat as a prop. We call it here to ensure
-    // granular settings are loaded correctly and to avoid duplicating the override logic for the theme.
-    SdkConfig.put(configJson);
-
-    // Load language after loading config.json so that settingsDefaults.language can be applied
-    await loadLanguage();
-
-    const fragparts = parseQsFromFragment(window.location);
     const params = parseQs(window.location);
-
-    // don't try to redirect to the native apps if we're
-    // verifying a 3pid (but after we've loaded the config)
-    // or if the user is following a deep link
-    // (https://github.com/vector-im/riot-web/issues/7378)
-    const preventRedirect = fragparts.params.client_secret || fragparts.location.length > 0;
-
-    if (!preventRedirect) {
-        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isAndroid = /Android/.test(navigator.userAgent);
-        if (isIos || isAndroid) {
-            if (document.cookie.indexOf("riot_mobile_redirect_to_guide=false") === -1) {
-                window.location = "mobile_guide/";
-                return;
-            }
-        }
-    }
-
-    // as quickly as we possibly can, set a default theme...
-    await setTheme();
-
-    // Now that we've loaded the theme (CSS), display the config syntax error if needed.
-    if (configSyntaxError) {
-        const errorMessage = (
-            <div>
-                <p>
-                    {_t(
-                        "Your Riot configuration contains invalid JSON. Please correct the problem " +
-                        "and reload the page.",
-                    )}
-                </p>
-                <p>
-                    {_t(
-                        "The message from the parser is: %(message)s",
-                        {message: configError.err.message || _t("Invalid JSON")},
-                    )}
-                </p>
-            </div>
-        );
-
-        const GenericErrorPage = sdk.getComponent("structures.GenericErrorPage");
-        window.matrixChat = ReactDOM.render(
-            <GenericErrorPage message={errorMessage} title={_t("Your Riot is misconfigured")} />,
-            document.getElementById('matrixchat'),
-        );
-        return;
-    }
-
-    const validBrowser = checkBrowserFeatures();
-
-    const acceptInvalidBrowser = window.localStorage && window.localStorage.getItem('mx_accepts_unsupported_browser');
 
     const urlWithoutQuery = window.location.protocol + '//' + window.location.host + window.location.pathname;
     console.log("Vector starting at " + urlWithoutQuery);
-    if (configError) {
-        window.matrixChat = ReactDOM.render(<div className="error">
-            Unable to load config file: please refresh the page to try again.
-        </div>, document.getElementById('matrixchat'));
-    } else if (validBrowser || acceptInvalidBrowser) {
-        platform.startUpdater();
 
-        // Don't bother loading the app until the config is verified
-        verifyServerConfig().then((newConfig) => {
-            const MatrixChat = sdk.getComponent('structures.MatrixChat');
-            window.matrixChat = ReactDOM.render(
-                <MatrixChat
-                    onNewScreen={onNewScreen}
-                    makeRegistrationUrl={makeRegistrationUrl}
-                    ConferenceHandler={VectorConferenceHandler}
-                    config={newConfig}
-                    realQueryParams={params}
-                    startingFragmentQueryParams={fragparts.params}
-                    enableGuest={!configJson.disable_guests}
-                    onTokenLoginCompleted={onTokenLoginCompleted}
-                    initialScreenAfterLogin={getScreenFromLocation(window.location)}
-                    defaultDeviceDisplayName={platform.getDefaultDeviceDisplayName()}
-                />,
-                document.getElementById('matrixchat'),
-            );
-        }).catch(err => {
-            console.error(err);
+    platform.startUpdater();
 
-            let errorMessage = err.translatedMessage
-                || _t("Unexpected error preparing the app. See console for details.");
-            errorMessage = <span>{errorMessage}</span>;
-
-            // Like the compatibility page, AWOOOOOGA at the user
-            const GenericErrorPage = sdk.getComponent("structures.GenericErrorPage");
-            window.matrixChat = ReactDOM.render(
-                <GenericErrorPage message={errorMessage} title={_t("Your Riot is misconfigured")} />,
-                document.getElementById('matrixchat'),
-            );
-        });
-    } else {
-        console.error("Browser is missing required features.");
-        // take to a different landing page to AWOOOOOGA at the user
-        const CompatibilityPage = sdk.getComponent("structures.CompatibilityPage");
-        window.matrixChat = ReactDOM.render(
-            <CompatibilityPage onAccept={function() {
-                if (window.localStorage) window.localStorage.setItem('mx_accepts_unsupported_browser', true);
-                console.log("User accepts the compatibility risks.");
-                loadApp();
-            }} />,
-            document.getElementById('matrixchat'),
-        );
-    }
-}
-
-function loadOlm() {
-    /* Load Olm. We try the WebAssembly version first, and then the legacy,
-     * asm.js version if that fails. For this reason we need to wait for this
-     * to finish before continuing to load the rest of the app. In future
-     * we could somehow pass a promise down to react-sdk and have it wait on
-     * that so olm can be loading in parallel with the rest of the app.
-     *
-     * We also need to tell the Olm js to look for its wasm file at the same
-     * level as index.html. It really should be in the same place as the js,
-     * ie. in the bundle directory, but as far as I can tell this is
-     * completely impossible with webpack. We do, however, use a hashed
-     * filename to avoid caching issues.
-     */
-    return Olm.init({
-        locateFile: () => olmWasmPath,
-    }).then(() => {
-        console.log("Using WebAssembly Olm");
-    }).catch((e) => {
-        console.log("Failed to load Olm: trying legacy version", e);
-        return new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'olm_legacy.js'; // XXX: This should be cache-busted too
-            s.onload = resolve;
-            s.onerror = reject;
-            document.body.appendChild(s);
-        }).then(() => {
-            // Init window.Olm, ie. the one just loaded by the script tag,
-            // not 'Olm' which is still the failed wasm version.
-            return window.Olm.init();
-        }).then(() => {
-            console.log("Using legacy Olm");
-        }).catch((e) => {
-            console.log("Both WebAssembly and asm.js Olm failed!", e);
-        });
-    });
-}
-
-async function loadLanguage() {
-    const prefLang = SettingsStore.getValue("language", null, /*excludeDefault=*/true);
-    let langs = [];
-
-    if (!prefLang) {
-        languageHandler.getLanguagesFromBrowser().forEach((l) => {
-            langs.push(...languageHandler.getNormalizedLanguageKeys(l));
-        });
-    } else {
-        langs = [prefLang];
-    }
-    try {
-        await languageHandler.setLanguage(langs);
-        document.documentElement.setAttribute("lang", languageHandler.getCurrentLanguage());
-    } catch (e) {
-        console.error("Unable to set language", e);
-    }
+    // Don't bother loading the app until the config is verified
+    const config = await verifyServerConfig();
+    const MatrixChat = sdk.getComponent('structures.MatrixChat');
+    return <MatrixChat
+        onNewScreen={onNewScreen}
+        makeRegistrationUrl={makeRegistrationUrl}
+        ConferenceHandler={VectorConferenceHandler}
+        config={config}
+        realQueryParams={params}
+        startingFragmentQueryParams={fragParams}
+        enableGuest={!config.disable_guests}
+        onTokenLoginCompleted={onTokenLoginCompleted}
+        initialScreenAfterLogin={getScreenFromLocation(window.location)}
+        defaultDeviceDisplayName={platform.getDefaultDeviceDisplayName()}
+    />;
 }
 
 async function verifyServerConfig() {
@@ -471,7 +249,6 @@ async function verifyServerConfig() {
             throw e;
         }
     }
-
 
     validatedConfig.isDefault = true;
 
