@@ -7,6 +7,15 @@ to `Settings->Labs`. This list is non-exhaustive and subject to change, chat in
 **Be warned! Labs features are not finalised, they may be fragile, they may change, they may be
 dropped. Ask in the room if you are unclear about any details here.**
 
+## New spinner design (`feature_new_spinner`)
+
+Replaces the old spinner image with a new, svg-based one featuring a sleeker design.
+
+## Font scaling (`feature_font_scaling`)
+
+Enables font scaling options for accessibility. To alter the scale check the
+appearance tab in settings.
+
 ## Message pinning (`feature_pinning`)
 
 Allows you to pin messages in the room. To pin a message, use the 3 dots to the right of the message
@@ -67,13 +76,8 @@ An implementation of [MSC2241](https://github.com/matrix-org/matrix-doc/pull/224
 
 This also includes a new implementation of the user & member info panel, designed to share more code between showing community members & room members. Built on top of this new panel is also a new UX for verification from the member panel.
 
-## Cross-signing (in development) (`feature_cross_signing`)
-
-Cross-signing ([MSC1756](https://github.com/matrix-org/matrix-doc/pull/1756))
-improves the device verification experience by allowing you to verify a user
-instead of verifying each of their devices.
-
-This feature is still in development and will be landing in several chunks.
+The setting will be removed in a future release, enabling it non-optionally for
+all users.
 
 ## Bridge info tab (`feature_bridge_state`)
 
@@ -95,3 +99,14 @@ adds an ability for end users to add themes themselves by using a URL to the JSO
 theme definition.
 
 For some sample themes, check out [aaronraimist/riot-web-themes](https://github.com/aaronraimist/riot-web-themes).
+
+## New room list (`feature_new_room_list`)
+
+A complete rewrite of the room list is underway to increase performance, stability,
+and general usability. This is still rapidly changing, but feel free to give it a test.
+
+## IRC message layout (`feature_irc_ui`)
+
+Adds an option to change the message layout to an IRC style ` timestamp | avatar
+| name | message `
+
