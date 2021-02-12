@@ -116,7 +116,7 @@ let meetApi: any; // JitsiMeetExternalAPI
                 console.log("Got OpenID Connect token");
             }
 
-            // TODO: register widgetApi listeners for PTT controls (https://github.com/vector-im/riot-web/issues/12795)
+            // TODO: register widgetApi listeners for PTT controls (https://github.com/vector-im/element-web/issues/12795)
 
             widgetApi.on(`action:${ElementWidgetActions.HangupCall}`,
                 (ev: CustomEvent<IWidgetApiRequest>) => {
@@ -164,6 +164,7 @@ function createJWTToken() {
             matrix: {
                 token: openIdToken.access_token,
                 room_id: roomId,
+                server_name: openIdToken.matrix_server_name,
             },
             user: {
                 avatar: avatarUrl,

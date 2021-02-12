@@ -1,8 +1,8 @@
 /*
 Copyright 2015, 2016 OpenMarket Ltd
 Copyright 2017 Vector Creations Ltd
-Copyright 2018, 2019, 2020 New Vector Ltd
 Copyright 2019 Michael Telatynski <7t3chguy@gmail.com>
+Copyright 2018 - 2021 New Vector Ltd
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import { initRageshake } from "./rageshakesetup";
 export const rageshakePromise = initRageshake();
 
 export function preparePlatform() {
-    if (window.ipcRenderer) {
+    if (window.electron) {
         console.log("Using Electron platform");
         PlatformPeg.set(new ElectronPlatform());
     } else if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -126,7 +126,7 @@ export async function loadSkin() {
             /* webpackPreload: true */
             "matrix-react-sdk"),
         import(
-            /* webpackChunkName: "riot-web-component-index" */
+            /* webpackChunkName: "element-web-component-index" */
             /* webpackPreload: true */
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore - this module is generated so may fail lint
@@ -143,7 +143,7 @@ export async function loadTheme() {
 export async function loadApp(fragParams: {}) {
     // load app.js async so that its code is not executed immediately and we can catch any exceptions
     const module = await import(
-        /* webpackChunkName: "riot-web-app" */
+        /* webpackChunkName: "element-web-app" */
         /* webpackPreload: true */
         "./app");
     window.matrixChat = ReactDOM.render(await module.loadApp(fragParams),

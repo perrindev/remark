@@ -31,7 +31,7 @@ Getting Started
 ===============
 
 The easiest way to test Element is to just use the hosted copy at https://app.element.io.
-The `develop` branch is continuously deployed by Jenkins at https://develop.element.io
+The `develop` branch is continuously deployed to https://develop.element.io
 for those who like living dangerously.
 
 To host your own copy of Element, the quickest bet is to use a pre-built
@@ -39,14 +39,14 @@ released version of Element:
 
 1. Download the latest version from https://github.com/vector-im/element-web/releases
 1. Untar the tarball on your web server
-1. Move (or symlink) the `riot-x.x.x` directory to an appropriate name
+1. Move (or symlink) the `element-x.x.x` directory to an appropriate name
 1. Configure the correct caching headers in your webserver (see below)
 1. If desired, copy `config.sample.json` to `config.json` and edit it
    as desired. See the [configuration docs](docs/config.md) for details.
 1. Enter the URL into your browser and log into Element!
 
 Releases are signed using gpg and the OpenPGP standard, and can be checked against the public key located
-at https://packages.riot.im/riot-release-key.asc.
+at https://packages.riot.im/element-release-key.asc.
 
 Note that for the security of your chats will need to serve Element
 over HTTPS. Major browsers also do not allow you to use VoIP/video
@@ -58,8 +58,11 @@ and thus allowed.
 To install Element as a desktop application, see [Running as a desktop
 app](#running-as-a-desktop-app) below.
 
-Important Security Note
-=======================
+Important Security Notes
+========================
+
+Separate domains
+----------------
 
 We do not recommend running Element from the same domain name as your Matrix
 homeserver.  The reason is the risk of XSS (cross-site-scripting)
@@ -70,6 +73,45 @@ access to Element (or other apps) due to sharing the same domain.
 We have put some coarse mitigations into place to try to protect against this
 situation, but it's still not good practice to do it in the first place.  See
 https://github.com/vector-im/element-web/issues/1977 for more details.
+
+Configuration best practices
+----------------------------
+
+Unless you have special requirements, you will want to add the following to
+your web server configuration when hosting Element Web:
+
+- The `X-Frame-Options: SAMEORIGIN` header, to prevent Element Web from being
+  framed and protect from [clickjacking][owasp-clickjacking].
+- The `frame-ancestors 'none'` directive to your `Content-Security-Policy`
+  header, as the modern replacement for `X-Frame-Options` (though both should be
+  included since not all browsers support it yet, see
+  [this][owasp-clickjacking-csp]).
+- The `X-Content-Type-Options: nosniff` header, to [disable MIME
+  sniffing][mime-sniffing].
+- The `X-XSS-Protection: 1; mode=block;` header, for basic XSS protection in
+  legacy browsers.
+
+[mime-sniffing]:
+<https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#mime_sniffing>
+
+[owasp-clickjacking-csp]:
+<https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html#content-security-policy-frame-ancestors-examples>
+
+[owasp-clickjacking]:
+<https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html>
+
+If you are using nginx, this would look something like the following:
+
+```
+add_header X-Frame-Options SAMEORIGIN;
+add_header X-Content-Type-Options nosniff;
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "frame-ancestors 'none'";
+```
+
+Note: In case you are already setting a `Content-Security-Policy` header
+elsewhere, you should modify it to include the `frame-ancestors` directive
+instead of adding that last line.
 
 Building From Source
 ====================
@@ -99,7 +141,8 @@ guide](https://classic.yarnpkg.com/en/docs/install) if you do not have it alread
 Note that `yarn dist` is not supported on Windows, so Windows users can run `yarn build`,
 which will build all the necessary files into the `webapp` directory. The version of Element
 will not appear in Settings without using the dist script. You can then mount the
-`webapp` directory on your webserver to actually serve up the app, which is entirely static content.
+`webapp` directory on your web server to actually serve up the app, which is
+entirely static content.
 
 Running as a Desktop app
 ========================
@@ -275,22 +318,29 @@ modifying it. See the [configuration docs](docs/config.md) for details.
 Open http://127.0.0.1:8080/ in your browser to see your newly built Element.
 
 **Note**: The build script uses inotify by default on Linux to monitor directories
-for changes. If the inotify watch limit is too low your build will silently fail.
-To avoid this issue, we recommend a limit of at least 128M.
+for changes. If the inotify limits are too low your build will fail silently or with
+`Error: EMFILE: too many open files`. To avoid these issues, we recommend a watch limit
+of at least `128M` and instance limit around `512`.
 
-To set a new inotify watch limit, execute:
+You may be interested in issues [#15750](https://github.com/vector-im/element-web/issues/15750) and
+[#15774](https://github.com/vector-im/element-web/issues/15774) for further details.
 
-```
-$ sudo sysctl fs.inotify.max_user_watches=131072
-$ sudo sysctl -p
-```
-
-If you wish, you can make this new limit permanent, by executing:
+To set a new inotify watch and instance limit, execute:
 
 ```
-$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
-$ sudo sysctl -p
+sudo sysctl fs.inotify.max_user_watches=131072
+sudo sysctl fs.inotify.max_user_instances=512
+sudo sysctl -p
 ```
+
+If you wish, you can make the new limits permanent, by executing:
+
+```
+echo fs.inotify.max_user_watches=131072 | sudo tee -a /etc/sysctl.conf
+echo fs.inotify.max_user_instances=512 | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
 ___
 
 When you make changes to `matrix-react-sdk` or `matrix-js-sdk` they should be
