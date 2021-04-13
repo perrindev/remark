@@ -8,6 +8,10 @@ const webpack = require("webpack");
 let og_image_url = process.env.RIOT_OG_IMAGE_URL;
 if (!og_image_url) og_image_url = 'https://app.element.io/themes/element/img/logos/opengraph.png';
 
+const additionalPlugins = [
+    // This is where you can put your customisation replacements.
+];
+
 module.exports = (env, argv) => {
     if (process.env.CI_PACKAGE) {
         // Don't run minification for CI builds (this is only set for runs on develop)
@@ -249,6 +253,18 @@ module.exports = (env, argv) => {
                     },
                 },
                 {
+                    // Fix up the name of the opus-recorder worker (react-sdk dependency).
+                    // We more or less just want it to be clear it's for opus and not something else.
+                    test: /encoderWorker\.min\.js$/,
+                    loader: "file-loader",
+                    type: "javascript/auto", // https://github.com/webpack/webpack/issues/6725
+                    options: {
+                        // We deliberately override the name so it makes sense in debugging
+                        name: 'opus-encoderWorker.min.[hash:7].[ext]',
+                        outputPath: '.',
+                    },
+                },
+                {
                     // cache-bust languages.json file placed in
                     // element-web/webapp/i18n during build by copy-res.js
                     test: /\.*languages.json$/,
@@ -357,6 +373,8 @@ module.exports = (env, argv) => {
                 minify: argv.mode === 'production',
                 chunks: ['usercontent'],
             }),
+
+            ...additionalPlugins,
         ],
 
         output: {
