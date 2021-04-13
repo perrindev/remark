@@ -12,7 +12,7 @@ const ProxyAgent = require("simple-proxy-agent");
 console.log("Making webapp directory");
 mkdirp.sync("webapp");
 
-// curl -s https://jitsi.riot.im/libs/external_api.min.js > ./webapp/jitsi_external_api.min.js
+// curl -s https://gist.github.com/abrenoch/ec03d9eb54d3f64a49ade74054dc8f40/raw/b9478bcd71ca3f40b12b5a992629e8afe89108cd/jitsi_external_api.min.js > ./webapp/jitsi_external_api.min.js
 console.log("Downloading Jitsi script");
 const fname = path.join("webapp", "jitsi_external_api.min.js");
 
@@ -21,7 +21,7 @@ if (process.env.HTTPS_PROXY) {
    options.agent = new ProxyAgent(process.env.HTTPS_PROXY, {tunnel: true});
 }
 
-fetch("https://jitsi.riot.im/libs/external_api.min.js", options).then(res => {
+fetch("https://gist.github.com/abrenoch/ec03d9eb54d3f64a49ade74054dc8f40/raw/b9478bcd71ca3f40b12b5a992629e8afe89108cd/jitsi_external_api.min.js", options).then(res => {
    const stream = fs.createWriteStream(fname);
    return new Promise((resolve, reject) => {
        res.body.pipe(stream);
